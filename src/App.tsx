@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import AppLayout from "./components/layout/AppLayout";
 import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -29,11 +30,46 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route element={<AppLayout />}>
-              <Route path="/feed" element={<Feed />} />
-              <Route path="/athletes" element={<Athletes />} />
-              <Route path="/jobs" element={<Jobs />} />
-              <Route path="/messages" element={<Messages />} />
-              <Route path="/profile" element={<Profile />} />
+              <Route
+                path="/feed"
+                element={
+                  <ProtectedRoute>
+                   <Feed />
+                  </ProtectedRoute>
+               }
+            />
+              <Route
+                path="/athletes"
+                element={
+                  <ProtectedRoute>
+                   <Athletes />
+                  </ProtectedRoute>
+               }
+            />
+              <Route
+                path="/jobs"
+                element={
+                  <ProtectedRoute>
+                   <Jobs />
+                  </ProtectedRoute>
+               }
+            />
+              <Route
+                path="/messages"
+                element={
+                  <ProtectedRoute>
+                   <Messages />
+                  </ProtectedRoute>
+               }
+            />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                   <Profile />
+                  </ProtectedRoute>
+               }
+            />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

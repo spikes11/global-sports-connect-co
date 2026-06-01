@@ -13,19 +13,24 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-const handleLogin = (e: React.FormEvent) => {
+const handleLogin = async (e: React.FormEvent) => {
   e.preventDefault();
   setLoading(true);
 
-  console.log("LOGIN START");
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
 
-  supabase.auth
-  .signInWithPassword({ email, password });
+  setLoading(false);
 
-setTimeout(() => {
+  if (error) {
+    toast.error(error.message);
+    return;
+  }
+
+  toast.success("Welcome back!");
   navigate("/feed");
-}, 1000);
-     
 };
 
 return (
