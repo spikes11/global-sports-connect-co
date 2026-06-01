@@ -27,41 +27,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    setSession(session);
+    setUser(session?.user ?? null);
+    setLoading(false);
+  });
 
-        if (session?.user) {
-          const { data } = await supabase
-            .from("profiles")
-            .select("*, athlete_details(*), team_details(*)")
-            .eq("user_id", session.user.id)
-            .single();
-          setProfile(data);
-        } else {
-          setProfile(null);
-        }
-        setLoading(false);
-      }
-    );
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((_event, session) => {
+    setSession(session);
+    setUser(session?.user ?? null);
+    setLoading(false);
+  });
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        supabase
-          .from("profiles")
-          .select("*, athlete_details(*), team_details(*)")
-          .eq("user_id", session.user.id)
-          .single()
-          .then(({ data }) => setProfile(data));
-      }
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  return () => {
+    subscription.unsubscribe();
+  };
+}, []);
 
   const signOut = async () => {
     await supabase.auth.signOut();
